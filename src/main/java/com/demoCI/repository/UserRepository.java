@@ -13,4 +13,5 @@ import com.demoCI.model.User;
  */
 public interface UserRepository extends JpaRepository<User, Long>{
 
+	public User getByUsername(String username);
 }
