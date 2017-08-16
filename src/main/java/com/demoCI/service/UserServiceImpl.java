@@ -18,8 +18,13 @@ import com.demoCI.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 	
-	@Autowired
 	private UserRepository userRepo;
+	
+	@Autowired
+	public UserServiceImpl(UserRepository userRepo){
+		
+		this.userRepo = userRepo;
+	}
 	
 	@Override
 	public User create(User u) {
@@ -48,7 +53,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<User> findAll(int page, int size) {
+	public Page<User> findByPage(int page, int size) {
 		// TODO Auto-generated method stub
 		return userRepo.findAll(new PageRequest(page, size));
 	}

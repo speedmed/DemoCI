@@ -31,11 +31,11 @@ public class DemoCiApplicationTests {
 		List<User> listUsers = Arrays.asList(u1,u2,u3);
 		Page<User> pageUsers = new PageImpl<>(listUsers);
 		
-		when(mockUserService.findAll(0, 5)).thenReturn(pageUsers);
+		when(mockUserService.findByPage(0, 5)).thenReturn(pageUsers);
 		when(mockUserService.create(u1)).thenReturn(u1);
 		when(mockUserService.read(2L)).thenReturn(u2);
 		
-		int size = mockUserService.findAll(0, 5).getNumberOfElements();
+		int size = mockUserService.findByPage(0, 5).getNumberOfElements();
 		User u = mockUserService.create(u1);
 		User us2 = mockUserService.read(2L);
 		assertEquals(size, 3);

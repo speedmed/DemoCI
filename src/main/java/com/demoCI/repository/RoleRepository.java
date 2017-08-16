@@ -13,4 +13,5 @@ import com.demoCI.model.Role;
  */
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
+	public Role getByRoleName(String roleName);
 }

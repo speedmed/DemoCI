@@ -42,8 +42,8 @@ public class DeliveryTask extends AbstractEntity{
 	private String deliveryMan;
 	//creator of delivery Task
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="client_fk", nullable = false)
-	private User client;
+	@JoinColumn(name="creator_fk", nullable = false)
+	private User creator;
 	
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval= true, fetch = FetchType.LAZY, mappedBy = "deliveryTask")
 	private List<DeliveryPoint> deliveryPoints = new ArrayList<DeliveryPoint>();
@@ -105,12 +105,12 @@ public class DeliveryTask extends AbstractEntity{
 		this.deliveryMan = deliveryMan;
 	}
 
-	public User getClient() {
-		return client;
+	public User getCreator() {
+		return creator;
 	}
 
-	public void setClient(User client) {
-		this.client = client;
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 
 	public List<DeliveryPoint> getDeliveryPoints() {
@@ -121,12 +121,12 @@ public class DeliveryTask extends AbstractEntity{
 		this.deliveryPoints = deliveryPoints;
 	}
 
-	public DeliveryTask(String taskName, Boolean completed, Boolean reserved, User client) {
+	public DeliveryTask(String taskName, Boolean completed, Boolean reserved, User creator) {
 		super();
 		this.taskName = taskName;
 		this.completed = completed;
 		this.reserved = reserved;
-		this.client = client;
+		this.creator = creator;
 	}
 
 	public DeliveryTask() {
