@@ -15,6 +15,7 @@ public interface UserService {
 	
 	public User create(User u);
 	public User read(Long id);
+	public User getReference(Long id);
 	public User update(User u);
 	public void delete(Long id);
 	public Page<User> findByPage(int page, int size);

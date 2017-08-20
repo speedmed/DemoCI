@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Med
  * 9 août 2017
@@ -41,7 +43,7 @@ public class DeliveryTask extends AbstractEntity{
 	
 	private String deliveryMan;
 	//creator of delivery Task
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY )
 	@JoinColumn(name="creator_fk", nullable = false)
 	private User creator;
 	
@@ -104,11 +106,12 @@ public class DeliveryTask extends AbstractEntity{
 	public void setDeliveryMan(String deliveryMan) {
 		this.deliveryMan = deliveryMan;
 	}
-
+	
+	@JsonIgnore
 	public User getCreator() {
 		return creator;
 	}
-
+	
 	public void setCreator(User creator) {
 		this.creator = creator;
 	}

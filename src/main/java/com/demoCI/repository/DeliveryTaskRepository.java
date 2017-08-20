@@ -14,7 +14,8 @@ import com.demoCI.model.DeliveryTask;
  * 12 août 2017
  */
 public interface DeliveryTaskRepository extends JpaRepository<DeliveryTask, Long> {
-
+	
+	public DeliveryTask findByIdAndCreatorId(Long id, Long idCreator);
 	public Page<DeliveryTask> findByCreatorId(Long idUser, Pageable page);
 	public Page<DeliveryTask> findByCreatorIdAndCompleted(Long idUser, boolean completed, Pageable page);
 	public Page<DeliveryTask> findByCreatorIdAndReserved(Long idUser, boolean reserved, Pageable page);

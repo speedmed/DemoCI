@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Med
  * 9 août 2017
@@ -19,7 +21,6 @@ public class DeliveryPoint extends AbstractEntity{
 
 	private static final long serialVersionUID = 1L;
 	
-	private String pointName;
 	private String description;
 	// No or Yes or in Progress
 	private String finished = "No";
@@ -30,14 +31,6 @@ public class DeliveryPoint extends AbstractEntity{
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="deliveryTask_fk")
 	private DeliveryTask deliveryTask;
-
-	public String getPointName() {
-		return pointName;
-	}
-
-	public void setPointName(String pointName) {
-		this.pointName = pointName;
-	}
 
 	public String getDescription() {
 		return description;
@@ -70,7 +63,8 @@ public class DeliveryPoint extends AbstractEntity{
 	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
 	}
-
+	
+	@JsonIgnore
 	public DeliveryTask getDeliveryTask() {
 		return deliveryTask;
 	}
@@ -79,10 +73,9 @@ public class DeliveryPoint extends AbstractEntity{
 		this.deliveryTask = deliveryTask;
 	}
 
-	public DeliveryPoint(String pointName, String description, String finished, Double longitude,
+	public DeliveryPoint(String description, String finished, Double longitude,
 			Double latitude) {
 		super();
-		this.pointName = pointName;
 		this.description = description;
 		this.finished = finished;
 		this.longitude = longitude;

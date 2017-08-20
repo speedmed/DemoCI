@@ -39,6 +39,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getReference(Long id) {
+		// TODO Auto-generated method stub
+		return userRepo.getOne(id);
+	}
+	
+	@Override
 	public User update(User u) {
 		// TODO Auto-generated method stub
 		User user = read(u.getId());
@@ -63,5 +69,6 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return userRepo.getByUsername(username);
 	}
+
 
 }
