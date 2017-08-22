@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.demoCI.exception.UserNotFoundException;
 import com.demoCI.model.User;
 import com.demoCI.repository.UserRepository;
 
@@ -17,6 +18,8 @@ import com.demoCI.repository.UserRepository;
  */
 @Service
 public class UserServiceImpl implements UserService {
+	
+	private static final String MSG_NOT_FOUND = "User not found";
 	
 	private UserRepository userRepo;
 	
@@ -35,13 +38,17 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User read(Long id) {
 		// TODO Auto-generated method stub
-		return userRepo.findOne(id);
+		User u = userRepo.findOne(id);
+		if(u == null) throw new UserNotFoundException(MSG_NOT_FOUND);
+		return u;
 	}
 
 	@Override
 	public User getReference(Long id) {
 		// TODO Auto-generated method stub
-		return userRepo.getOne(id);
+		User u = userRepo.getOne(id);
+		if(u == null) throw new UserNotFoundException(MSG_NOT_FOUND);
+		return u; 
 	}
 	
 	@Override
@@ -67,7 +74,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findByUsername(String username) {
 		// TODO Auto-generated method stub
-		return userRepo.getByUsername(username);
+		User u = userRepo.getByUsername(username);
+		if(u == null) throw new UserNotFoundException(MSG_NOT_FOUND);
+		return u;
 	}
 
 

@@ -21,6 +21,7 @@ public class DeliveryTaskDTO {
 	private Float progress;
 	private Boolean reserved;
 	private String deliveryMan;
+	private Long creatorId;
 	
 	private List<DeliveryPointDTO> deliveryPoints = new ArrayList<DeliveryPointDTO>();
 	
@@ -99,6 +100,14 @@ public class DeliveryTaskDTO {
 
 	public void setDeliveryPoints(List<DeliveryPointDTO> deliveryPoints) {
 		this.deliveryPoints = deliveryPoints;
+	}
+
+	public Long getCreatorId() {
+		return creatorId;
+	}
+
+	public void setCreatorId(Long creatorId) {
+		this.creatorId = creatorId;
 	}
 
 	@Override
