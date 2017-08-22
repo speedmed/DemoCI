@@ -1,6 +1,9 @@
 package com.demoCI;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +24,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.demoCI.controller.dto.DeliveryPointDTO;
 import com.demoCI.controller.dto.DeliveryTaskDTO;
+import com.demoCI.exception.DeliveryTaskNotFoundException;
+import com.demoCI.exception.UserNotFoundException;
 import com.demoCI.model.DeliveryPoint;
 import com.demoCI.model.DeliveryTask;
 import com.demoCI.model.Role;
@@ -42,7 +47,7 @@ public class DemoCiApplicationTests {
 	private UserService userService;
 	
 	@Test
-	public void test_user() {
+	public void unit_test_user() {
 		UserServiceImpl mockUserService = mock(UserServiceImpl.class);
 		
 		User u1 = new User("user1", "email1", "pass1");
@@ -73,21 +78,33 @@ public class DemoCiApplicationTests {
 		when(mockUserService.findByUsername("user1")).thenReturn(null);
 		when(mockUserService.findByUsername("UpdatedUser1")).thenReturn(u1);
 		
-		assertEquals(null, mockUserService.findByUsername("user1"));
+		assertNull(mockUserService.findByUsername("user1"));
 		assertEquals("email1", mockUserService.findByUsername("UpdatedUser1").getEmail());
 	}
 	
 	@Test
-	public void test_integration_user(){
+	public void test_integration_add_user(){
 		User user = new User("user1", "email1", "pass1");
 		user.addRole(new Role("ADMIN"));
 		userService.create(user);
 		User u = userService.findByUsername("user1");
 		assertEquals("email1", u.getEmail());
 		assertEquals("ROLE_ADMIN", u.getRoles().stream().map(r -> r.getRoleName()).findAny().orElse(null));
-		
 	}
-	@Test
+	
+	@Test(expected = UserNotFoundException.class)
+	public void test_findByUsername_shouldThrowUserNotFoundException(){
+		
+		assertThat(userService.findByUsername("user2"));
+	}
+	
+	@Test(expected = UserNotFoundException.class)
+	public void test_readById_shouldThrowUserNotFoundException(){
+		
+		assertThat(userService.read(3L));
+		assertThat(userService.getReference(3L));
+	}
+	@Test(expected = DeliveryTaskNotFoundException.class)
 	public void test_integration_DeliveryTask(){
 		// Create Delivery task with user and points
 		User user = new User("user1", "email1", "pass1");
@@ -109,18 +126,18 @@ public class DemoCiApplicationTests {
 		assertEquals("task1", dTaskCreated.getTaskName());
 		assertEquals("description2 point", dTaskCreated.getDeliveryPoints().get(1).getDescription());
 		assertEquals("user1", dTaskCreated.getCreator().getUsername());
-		assertEquals(Long.valueOf(2), dTaskCreated.getCreator().getId());
+		assertEquals(Long.valueOf(1), dTaskCreated.getCreator().getId());
 /* ********************************************************************************************************************************  */
 		//Reserve a Delivery Task
 		dTaskService.setReserved(dTask.getId(), u.getId(), true);
-		assertEquals(true, dTask.getReserved());
+		assertTrue(dTask.getReserved());
 		assertEquals("user1", dTask.getDeliveryMan());
 /* ********************************************************************************************************************************* */		
 		
 		//Switch the state of the delivery point.
 		dTaskService.switchFinishedStatePoint(1L, dTask.getId(), dTask.getCreator().getId(), "Yes");
 		dTaskService.switchFinishedStatePoint(2L, dTask.getId(), dTask.getCreator().getId(), "Yes");
-		assertEquals(true, dTask.getCompleted());
+		assertTrue(dTask.getCompleted());
 /* ********************************************************************************************************************************** */
 		
 		//Update Delivery task without fetching the entity in the DB
@@ -135,7 +152,18 @@ public class DemoCiApplicationTests {
 		//Delete Delivery Task
 		dTaskService.delete(updatedTask.getId());
 		DeliveryTask deleteTask =  dTaskService.read(1L, u.getId());
-		assertEquals(null, deleteTask);
+		assertNull(deleteTask);
+/* ********************************************************************************************************************************** */
+	}
+	
+	@Test(expected = DeliveryTaskNotFoundException.class)
+	public void test_shouldThrowDeliveryTaskNotFoundException(){
+		
+		assertThat(dTaskService.read(1L, 2L));
+		assertThat(dTaskService.getReference(1L));
+		assertThat(dTaskService.findByPage(2L, 1, 5));
+		assertThat(dTaskService.findCompleted(2L, true, 1, 5));
+		assertThat(dTaskService.findReserved(2L, true, 1, 5));
 	}
 	
 	@Test
