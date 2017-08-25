@@ -7,20 +7,17 @@ package com.demoCI.controller.dto;
  * @author Med
  * 19 août 2017
  */
-public class reservedTaskDTO {
+public class ReservedTaskDTO {
 	
 	private Long deliveryTaskId;
-	private Long deliveryManId;
-	private Boolean reserved;
 	
-	public reservedTaskDTO() {
+	public ReservedTaskDTO() {
 		super();
 	}
-	public Long getDeliveryManId() {
-		return deliveryManId;
-	}
-	public void setDeliveryManId(Long deliveryManId) {
-		this.deliveryManId = deliveryManId;
+	
+	public ReservedTaskDTO(Long deliveryTaskId) {
+		super();
+		this.deliveryTaskId = deliveryTaskId;
 	}
 	
 	public Long getDeliveryTaskId() {
@@ -28,11 +25,5 @@ public class reservedTaskDTO {
 	}
 	public void setDeliveryTaskId(Long deliveryTaskId) {
 		this.deliveryTaskId = deliveryTaskId;
-	}
-	public Boolean getReserved() {
-		return reserved;
-	}
-	public void setReserved(Boolean reserved) {
-		this.reserved = reserved;
 	}
 }

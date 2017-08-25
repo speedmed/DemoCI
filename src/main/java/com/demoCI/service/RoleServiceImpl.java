@@ -3,6 +3,8 @@
  */
 package com.demoCI.service;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import com.demoCI.repository.RoleRepository;
  * 12 août 2017
  */
 @Service
+@Transactional
 public class RoleServiceImpl implements RoleService {
 	
 	private RoleRepository roleRepo;

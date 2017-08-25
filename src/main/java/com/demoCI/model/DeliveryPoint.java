@@ -9,8 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * @author Med
  * 9 août 2017
@@ -64,7 +62,7 @@ public class DeliveryPoint extends AbstractEntity{
 		this.latitude = latitude;
 	}
 	
-	@JsonIgnore
+	
 	public DeliveryTask getDeliveryTask() {
 		return deliveryTask;
 	}
@@ -86,6 +84,11 @@ public class DeliveryPoint extends AbstractEntity{
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
+
+	@Override
+	public String toString() {
+		return "DeliveryPoint [description=" + description + ", finished=" + finished + ", longitude=" + longitude
+				+ ", latitude=" + latitude + ", deliveryTaskId=" + deliveryTask.getId() + ", getId()=" + getId() + "]";
+	}	
 	
 }

@@ -29,6 +29,19 @@ public class DeliveryTaskDTO {
 	public DeliveryTaskDTO() {
 		super();
 	}
+	
+	public DeliveryTaskDTO(String taskName, Date createdDate, Date endDate, Boolean completed, Float progress,
+			Boolean reserved, Long creatorId) {
+		super();
+		this.taskName = taskName;
+		this.createdDate = createdDate;
+		this.endDate = endDate;
+		this.completed = completed;
+		this.progress = progress;
+		this.reserved = reserved;
+		this.creatorId = creatorId;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -114,8 +127,8 @@ public class DeliveryTaskDTO {
 	public String toString() {
 		return "DeliveryTaskDTO [id=" + id + ", taskName=" + taskName + ", createdDate=" + createdDate + ", endDate="
 				+ endDate + ", completed=" + completed + ", progress=" + progress + ", reserved=" + reserved
-				+ ", deliveryMan=" + deliveryMan + ", deliveryPoints=" + deliveryPoints + "]";
+				+ ", deliveryMan=" + deliveryMan + ", creatorId=" + creatorId + ", deliveryPoints=" + deliveryPoints
+				+ "]";
 	}
-	
 	
 }

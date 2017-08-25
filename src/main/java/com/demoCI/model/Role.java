@@ -3,6 +3,7 @@ package com.demoCI.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -18,6 +19,7 @@ public class Role extends AbstractEntity{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Column(nullable=false, unique=true)
 	private String roleName;
 	
 	@ManyToMany(mappedBy="roles", fetch=FetchType.LAZY)

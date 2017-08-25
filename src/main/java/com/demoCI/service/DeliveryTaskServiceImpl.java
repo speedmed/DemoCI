@@ -25,17 +25,16 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 
 	private static final String MSG_NOT_FOUND = "Delivery Task not found";
 	private static final String MSG_PAGE_NOT_FOUND = "You don't have any Delivery Task";
-	private static final String MSG_PAGE_COMPLETED_NOT_FOUND = "You don't have any completed Delivery Task";
-	private static final String MSG_PAGE_RESERVED_NOT_FOUND = "You don't have any reserved Delivery Task";
+	private static final String MSG_PAGE_COMPLETED_NOT_FOUND = "None of your delivery tasks are completed";
+	private static final String MSG_PAGE_RESERVED_NOT_FOUND = "None of your delivery tasks are reserved";
+	private static final String MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND = "No delivery task was found";
 	
 	
 	private DeliveryTaskRepository dTaskRepo;
-	private UserService userService;
 	
 	@Autowired
-	public DeliveryTaskServiceImpl(DeliveryTaskRepository dTaskRepo, UserService userService){
+	public DeliveryTaskServiceImpl(DeliveryTaskRepository dTaskRepo){
 		this.dTaskRepo = dTaskRepo;
-		this.userService = userService;
 	} 
 	
 	@Override
@@ -46,17 +45,33 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 	}
 
 	@Override
-	public DeliveryTask getReference(Long id) {
+	public DeliveryTask getReference(Long idTask) {
 		// TODO Auto-generated method stub
-		DeliveryTask dTask = dTaskRepo.getOne(id);
+		DeliveryTask dTask = dTaskRepo.getOne(idTask);
+		
+		return dTask;
+	}
+	
+	@Override
+	public DeliveryTask read(Long idTask, String deliveryMan) {
+		// TODO Auto-generated method stub
+		DeliveryTask dTask = dTaskRepo.findByIdAndDeliveryMan(idTask, deliveryMan);
 		if(dTask == null) throw new DeliveryTaskNotFoundException(MSG_NOT_FOUND);
 		return dTask;
 	}
 	
 	@Override
-	public DeliveryTask read(Long id, Long idCreator) {
+	public DeliveryTask read(Long idTask, Long idCreator) {
 		// TODO Auto-generated method stub
-		DeliveryTask dTask = dTaskRepo.findByIdAndCreatorId(id, idCreator);
+		DeliveryTask dTask = dTaskRepo.findByIdAndCreatorId(idTask, idCreator);
+		if(dTask == null) throw new DeliveryTaskNotFoundException(MSG_NOT_FOUND);
+		return dTask;
+	}
+	
+	@Override
+	public DeliveryTask read(Long id) {
+		// TODO Auto-generated method stub
+		DeliveryTask dTask = dTaskRepo.findOne(id);
 		if(dTask == null) throw new DeliveryTaskNotFoundException(MSG_NOT_FOUND);
 		return dTask;
 	}
@@ -74,7 +89,13 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 	}
 
 	@Override
-	public Page<DeliveryTask> findByPage(Long idUser, int page, int size) {
+	public Page<DeliveryTask> findAll(int page, int size) {
+		// TODO Auto-generated method stub
+		return dTaskRepo.findAll( new PageRequest(page, size));
+	}
+	
+	@Override
+	public Page<DeliveryTask> findPageByUser(Long idUser, int page, int size) {
 		// TODO Auto-generated method stub
 		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorId(idUser, new PageRequest(page, size));
 		
@@ -103,9 +124,28 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 	}
 
 	@Override
-	public void switchFinishedStatePoint(Long idPoint,Long idtask, Long idCreator, String state) {
+	public Page<DeliveryTask> findByDeliveryMan(String deliveryMan, int page, int size) {
 		// TODO Auto-generated method stub
-		DeliveryTask dTask = read(idtask, idCreator);
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByDeliveryMan(deliveryMan, new PageRequest(page, size));
+		
+		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND);
+		return pageDTask;
+	}
+
+	@Override
+	public Page<DeliveryTask> findDeliveryManAndCompleted(String deliveryMan, boolean completed, int page, int size) {
+		// TODO Auto-generated method stub
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByDeliveryManAndCompleted(deliveryMan, completed, new PageRequest(page, size));
+		
+		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND);
+		return pageDTask;
+	}
+	
+	@Override
+	public void switchFinishedStatePoint(Long idPoint,Long idTask, String deliveryMan, String state) {
+		// TODO Auto-generated method stub
+		DeliveryTask dTask = read(idTask, deliveryMan);
+		
 		dTask.getDeliveryPoints().forEach(p -> {
 			if(p.getId() == idPoint){
 				
@@ -122,17 +162,41 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 				}
 			}
 		});
-		
 		update(dTask);
 		
 	}
 	
 	@Override
-	public void setReserved(Long idTask, Long idDeliveryMan, Boolean reserved) {
+	public void setReservedTrue(Long idTask, String deliveryMan) {
 		// TODO Auto-generated method stub
-		DeliveryTask dTask = getReference(idTask);
-		dTask.setDeliveryMan(userService.getReference(idDeliveryMan).getUsername());
-		dTask.setReserved(reserved);
+		DeliveryTask dTask = read(idTask);
+		if(!dTask.getReserved()){
+			dTask.setDeliveryMan(deliveryMan);
+			dTask.setReserved(true);
+			update(dTask);
+		}else{
+			// throw already reserved
+			throw new RuntimeException("Delivery task already reserved");
+		}
+		
+	}
+
+	@Override
+	public void setReservedFalse(Long idTask, Long idUser) {
+		DeliveryTask dTask = read(idTask, idUser);
+		if(dTask.getReserved()){
+			dTask.setDeliveryMan(null);
+			dTask.setReserved(false);
+			update(dTask);
+		}else{
+			// throw already reserved
+			throw new RuntimeException("Delivery task already not reserved");
+		}
+		
+	}
+	@Override
+	public void flush(){
+		dTaskRepo.flush();
 	}
 	
 	private float calculateProgress(String state, DeliveryTask dTask, DeliveryPoint p){
@@ -149,6 +213,4 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 		}
 		return progress;
 	}
-
-
 }

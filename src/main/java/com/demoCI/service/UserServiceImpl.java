@@ -3,6 +3,8 @@
  */
 package com.demoCI.service;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,7 @@ import com.demoCI.repository.UserRepository;
  * 12 août 2017
  */
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 	
 	private static final String MSG_NOT_FOUND = "User not found";

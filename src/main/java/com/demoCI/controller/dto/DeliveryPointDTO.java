@@ -69,6 +69,16 @@ public class DeliveryPointDTO {
 		super();
 	}
 
+	public DeliveryPointDTO(String description, String finished, Double longitude, Double latitude,
+			Long deliveryTaskId) {
+		super();
+		this.description = description;
+		this.finished = finished;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.deliveryTaskId = deliveryTaskId;
+	}
+
 	@Override
 	public String toString() {
 		return "DeliveryPointDTO [id=" + id + ", description=" + description + ", finished=" + finished + ", longitude="

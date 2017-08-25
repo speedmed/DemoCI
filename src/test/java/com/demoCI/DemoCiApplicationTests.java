@@ -2,6 +2,7 @@ package com.demoCI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -12,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
@@ -89,7 +89,7 @@ public class DemoCiApplicationTests {
 		userService.create(user);
 		User u = userService.findByUsername("user1");
 		assertEquals("email1", u.getEmail());
-		assertEquals("ROLE_ADMIN", u.getRoles().stream().map(r -> r.getRoleName()).findAny().orElse(null));
+		assertEquals(1, u.getRoles().size());
 	}
 	
 	@Test(expected = UserNotFoundException.class)
@@ -102,7 +102,6 @@ public class DemoCiApplicationTests {
 	public void test_readById_shouldThrowUserNotFoundException(){
 		
 		assertThat(userService.read(3L));
-		assertThat(userService.getReference(3L));
 	}
 	@Test(expected = DeliveryTaskNotFoundException.class)
 	public void test_integration_DeliveryTask(){
@@ -122,21 +121,21 @@ public class DemoCiApplicationTests {
 		dTask.setProgress(0.0f);
 		DeliveryTask dTaskCreated = dTaskService.create(dTask);
 		
-		assertEquals(Long.valueOf(1), dTaskCreated.getId());
+		assertNotNull(dTaskCreated.getId());
 		assertEquals("task1", dTaskCreated.getTaskName());
 		assertEquals("description2 point", dTaskCreated.getDeliveryPoints().get(1).getDescription());
 		assertEquals("user1", dTaskCreated.getCreator().getUsername());
-		assertEquals(Long.valueOf(1), dTaskCreated.getCreator().getId());
+		assertNotNull(dTaskCreated.getCreator().getId());
 /* ********************************************************************************************************************************  */
 		//Reserve a Delivery Task
-		dTaskService.setReserved(dTask.getId(), u.getId(), true);
+		dTaskService.setReservedTrue(dTask.getId(), u.getUsername());
 		assertTrue(dTask.getReserved());
 		assertEquals("user1", dTask.getDeliveryMan());
 /* ********************************************************************************************************************************* */		
 		
 		//Switch the state of the delivery point.
-		dTaskService.switchFinishedStatePoint(1L, dTask.getId(), dTask.getCreator().getId(), "Yes");
-		dTaskService.switchFinishedStatePoint(2L, dTask.getId(), dTask.getCreator().getId(), "Yes");
+		dTaskService.switchFinishedStatePoint(1L, dTask.getId(), u.getUsername(), "Yes");
+		dTaskService.switchFinishedStatePoint(2L, dTask.getId(), u.getUsername(), "Yes");
 		assertTrue(dTask.getCompleted());
 /* ********************************************************************************************************************************** */
 		
@@ -151,8 +150,8 @@ public class DemoCiApplicationTests {
 		
 		//Delete Delivery Task
 		dTaskService.delete(updatedTask.getId());
-		DeliveryTask deleteTask =  dTaskService.read(1L, u.getId());
-		assertNull(deleteTask);
+		DeliveryTask deletedTask =  dTaskService.read(1L, u.getId());
+		assertNull(deletedTask);
 /* ********************************************************************************************************************************** */
 	}
 	
@@ -161,7 +160,7 @@ public class DemoCiApplicationTests {
 		
 		assertThat(dTaskService.read(1L, 2L));
 		assertThat(dTaskService.getReference(1L));
-		assertThat(dTaskService.findByPage(2L, 1, 5));
+		assertThat(dTaskService.findPageByUser(2L, 1, 5));
 		assertThat(dTaskService.findCompleted(2L, true, 1, 5));
 		assertThat(dTaskService.findReserved(2L, true, 1, 5));
 	}

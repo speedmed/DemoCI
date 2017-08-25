@@ -18,8 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * @author Med
  * 9 août 2017
@@ -107,7 +105,6 @@ public class DeliveryTask extends AbstractEntity{
 		this.deliveryMan = deliveryMan;
 	}
 	
-	@JsonIgnore
 	public User getCreator() {
 		return creator;
 	}
@@ -121,6 +118,11 @@ public class DeliveryTask extends AbstractEntity{
 	}
 
 	public void setDeliveryPoints(List<DeliveryPoint> deliveryPoints) {
+		
+		deliveryPoints.forEach(dPoint -> {
+			if(dPoint.getDeliveryTask() == null)
+				dPoint.setDeliveryTask(this);
+			});
 		this.deliveryPoints = deliveryPoints;
 	}
 
@@ -146,6 +148,13 @@ public class DeliveryTask extends AbstractEntity{
 		this.deliveryPoints.remove(deliveryPoint);
 		deliveryPoint.setDeliveryTask(null);
 	}
-	
+
+	@Override
+	public String toString() {
+		return "DeliveryTask [taskName=" + taskName + ", createdDate=" + createdDate + ", endDate=" + endDate
+				+ ", completed=" + completed + ", progress=" + progress + ", reserved=" + reserved + ", deliveryMan="
+				+ deliveryMan + ", creator=" + creator + ", deliveryPoints=" + deliveryPoints + ", getId()=" + getId()
+				+ "]";
+	}
 	
 }
