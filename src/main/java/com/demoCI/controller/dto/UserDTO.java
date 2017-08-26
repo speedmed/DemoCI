@@ -7,16 +7,23 @@ package com.demoCI.controller.dto;
  * @author Med
  * 22 août 2017
  */
+// Used to transfert insensitive data
 public class UserDTO {
 
 	private Long id;
 	private String username;
 	private String email;
-	private String password;
 	
 	public UserDTO() {
 		super();
 	}
+	
+	public UserDTO(String username, String email) {
+		super();
+		this.username = username;
+		this.email = email;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -35,15 +42,10 @@ public class UserDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	
 	@Override
 	public String toString() {
-		return "UserDTO [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password + "]";
+		return "UserDTO [id=" + id + ", username=" + username + ", email=" + email + "]";
 	}
 	
 }

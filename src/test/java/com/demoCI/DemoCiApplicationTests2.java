@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.demoCI.controller.dto.DeliveryPointDTO;
 import com.demoCI.controller.dto.DeliveryTaskDTO;
 import com.demoCI.controller.dto.ReservedTaskDTO;
-import com.demoCI.controller.dto.UserDTO;
+import com.demoCI.controller.dto.UserRegisterDTO;
 import com.demoCI.exception.DeliveryTaskNotFoundException;
 import com.demoCI.model.DeliveryPoint;
 import com.demoCI.model.DeliveryTask;
@@ -51,13 +51,13 @@ public class DemoCiApplicationTests2 {
 	@Autowired
 	private RoleService roleService;
 	
-	UserDTO userDto;
+	UserRegisterDTO userDto;
 	DeliveryTaskDTO dTaskDto;
 	DeliveryTask dTask;
 	
 	@Before
 	public void initialize(){
-		userDto = new UserDTO();
+		userDto = new UserRegisterDTO();
 		userDto.setUsername("username1");
 		userDto.setEmail("email1");
 		userDto.setPassword("pass");

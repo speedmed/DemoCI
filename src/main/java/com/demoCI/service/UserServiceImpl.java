@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
 	public User update(User u) {
 		// TODO Auto-generated method stub
 		User user = read(u.getId());
+		u.setUsername(user.getUsername());
 		u.setPassword(user.getPassword());
 		return userRepo.save(u);
 	}
@@ -69,9 +70,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<User> findByPage(int page, int size) {
+	public PageOf<User> findByPage(int page, int size) {
 		// TODO Auto-generated method stub
-		return userRepo.findAll(new PageRequest(page, size));
+		Page<User> pageUser = userRepo.findAll(new PageRequest(page, size));
+		PageOf<User> pageOfUsers = new PageOf<User>(pageUser.getContent(),
+				pageUser.getNumber(), 
+				pageUser.getNumberOfElements(), 
+				pageUser.getTotalElements(), 
+				pageUser.getTotalPages());
+		return pageOfUsers;
 	}
 
 	@Override

@@ -18,8 +18,6 @@ import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.demoCI.controller.dto.DeliveryPointDTO;
@@ -31,6 +29,7 @@ import com.demoCI.model.DeliveryTask;
 import com.demoCI.model.Role;
 import com.demoCI.model.User;
 import com.demoCI.service.DeliveryTaskService;
+import com.demoCI.service.PageOf;
 import com.demoCI.service.UserService;
 import com.demoCI.service.UserServiceImpl;
 
@@ -54,13 +53,12 @@ public class DemoCiApplicationTests {
 		User u2 = new User("user2", "email2", "pass2");
 		User u3 = new User("user3", "email3", "pass3");
 		List<User> listUsers = Arrays.asList(u1,u2,u3);
-		Page<User> pageUsers = new PageImpl<>(listUsers);
 		
-		when(mockUserService.findByPage(0, 5)).thenReturn(pageUsers);
+		when(mockUserService.findByPage(0, 5)).thenReturn(new PageOf<>(listUsers, 0, 3, 1L, 1));
 		when(mockUserService.create(u1)).thenReturn(u1);
 		when(mockUserService.read(2L)).thenReturn(u2);
 		
-		int size = mockUserService.findByPage(0, 5).getNumberOfElements();
+		int size = mockUserService.findByPage(0, 5).getSize();
 		User u = mockUserService.create(u1);
 		User us2 = mockUserService.read(2L);
 		assertEquals(size, 3);
