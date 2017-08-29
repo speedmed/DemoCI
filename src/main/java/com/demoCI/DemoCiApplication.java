@@ -1,35 +1,18 @@
 package com.demoCI;
 
-import javax.sql.DataSource;
-import javax.transaction.Transactional;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.demoCI.controller.dto.UserRegisterDTO;
-import com.demoCI.model.Role;
-import com.demoCI.model.User;
-import com.demoCI.service.RoleService;
-import com.demoCI.service.UserService;
 
 @SpringBootApplication
-public class DemoCiApplication implements CommandLineRunner{
+public class DemoCiApplication {
 
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private RoleService roleService;
-	@Autowired
-	private ModelMapper modelMapper;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(DemoCiApplication.class, args);
 	}
 	
-	@Override
+/*	@Override
 	@Transactional
     public void run(String... args) throws Exception {
 		
@@ -48,5 +31,5 @@ public class DemoCiApplication implements CommandLineRunner{
 		userService.create(u1);
 		userService.create(u2);
 
-    }
+    }*/
 }
