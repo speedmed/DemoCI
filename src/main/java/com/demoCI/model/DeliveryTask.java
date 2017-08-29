@@ -56,7 +56,7 @@ public class DeliveryTask extends AbstractEntity{
 	public void setTaskName(String taskName) {
 		this.taskName = taskName;
 	}
-
+	
 	public Date getCreatedDate() {
 		return createdDate;
 	}

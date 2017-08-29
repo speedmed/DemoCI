@@ -3,8 +3,6 @@
  */
 package com.demoCI.service;
 
-import org.springframework.data.domain.Page;
-
 import com.demoCI.model.DeliveryTask;
 
 /**
@@ -25,16 +23,16 @@ public interface DeliveryTaskService {
 	public void switchFinishedStatePoint(Long idPoint,Long idtask, String deliveryMan, String state);
 	//switch reserved property, deliveryMan will be fetched from JWT
 	public void setReservedTrue(Long idTask, String deliveryMan);
-	public void setReservedFalse(Long idTask, Long idUser);
+	public void setReservedFalse(Long idTask, Long idCreator);
 		
 	public void flush();
 	
-	public Page<DeliveryTask> findAll(int page, int size);
-	public Page<DeliveryTask> findPageByUser(Long idUser, int page, int size);
-	public Page<DeliveryTask> findCompleted(Long idUser, boolean completed, int page, int size);
-	public Page<DeliveryTask> findReserved(Long idUser, boolean reserved, int page, int size);
-	public Page<DeliveryTask> findByDeliveryMan(String deliveryMan, int page, int size);
-	public Page<DeliveryTask> findDeliveryManAndCompleted(String deliveryMan, boolean completed, int page, int size);
+	public PageOf<DeliveryTask> findAll(int page, int size);
+	public PageOf<DeliveryTask> findPageByUser(Long idUser, int page, int size);
+	public PageOf<DeliveryTask> findCompleted(Long idUser, boolean completed, int page, int size);
+	public PageOf<DeliveryTask> findReserved(Long idUser, boolean reserved, int page, int size);
+	public PageOf<DeliveryTask> findByDeliveryMan(String deliveryMan, int page, int size);
+	public PageOf<DeliveryTask> findDeliveryManAndCompleted(String deliveryMan, boolean completed, int page, int size);
 	
 	
 }

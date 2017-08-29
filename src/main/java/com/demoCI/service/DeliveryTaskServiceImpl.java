@@ -3,11 +3,15 @@
  */
 package com.demoCI.service;
 
+import java.util.Date;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.demoCI.exception.DeliveryTaskNotFoundException;
@@ -24,9 +28,11 @@ import com.demoCI.repository.DeliveryTaskRepository;
 public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 
 	private static final String MSG_NOT_FOUND = "Delivery Task not found";
-	private static final String MSG_PAGE_NOT_FOUND = "You don't have any Delivery Task";
-	private static final String MSG_PAGE_COMPLETED_NOT_FOUND = "None of your delivery tasks are completed";
-	private static final String MSG_PAGE_RESERVED_NOT_FOUND = "None of your delivery tasks are reserved";
+	private static final String MSG_PAGE_NOT_FOUND = "You did not create any Delivery Task";
+	private static final String MSG_PAGE_COMPLETED_TRUE_NOT_FOUND = "None of your delivery tasks are complete";
+	private static final String MSG_PAGE_COMPLETED_FALSE_NOT_FOUND = "All your delivery tasks are complete";
+	private static final String MSG_PAGE_RESERVED_TRUE_NOT_FOUND = "None of your delivery tasks are reserved";
+	private static final String MSG_PAGE_RESERVED_FALSE_NOT_FOUND = "All your delivery tasks are reserved";
 	private static final String MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND = "No delivery task was found";
 	
 	
@@ -40,7 +46,7 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 	@Override
 	public DeliveryTask create(DeliveryTask dTask) {
 		// TODO Auto-generated method stub
-		
+		dTask.setCreatedDate(new Date());
 		return dTaskRepo.save(dTask);
 	}
 
@@ -89,56 +95,69 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 	}
 
 	@Override
-	public Page<DeliveryTask> findAll(int page, int size) {
+	public PageOf<DeliveryTask> findAll(int page, int size) {
 		// TODO Auto-generated method stub
-		return dTaskRepo.findAll( new PageRequest(page, size));
+		PageRequest pageConfig = new PageRequest(page, size, new Sort(new Sort.Order(Direction.DESC, "createdDate")));
+		Page<DeliveryTask> pageDTask = dTaskRepo.findAll(pageConfig);
+		PageOf<DeliveryTask> pageOfDeliveryTasks = createPageOf(pageDTask);
+		return pageOfDeliveryTasks;
 	}
 	
 	@Override
-	public Page<DeliveryTask> findPageByUser(Long idUser, int page, int size) {
+	public PageOf<DeliveryTask> findPageByUser(Long idUser, int page, int size) {
 		// TODO Auto-generated method stub
-		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorId(idUser, new PageRequest(page, size));
-		
-		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_NOT_FOUND);
-		
-		return pageDTask;
+		PageRequest pageConfig = new PageRequest(page, size, new Sort(new Sort.Order(Direction.DESC, "createdDate")));
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorId(idUser, pageConfig);
+		if(!pageDTask.hasContent()) throw new DeliveryTaskNotFoundException(MSG_PAGE_NOT_FOUND);
+		PageOf<DeliveryTask> pageOfDeliveryTasks = createPageOf(pageDTask);
+		return pageOfDeliveryTasks;
 	}
 
 	@Override
-	public Page<DeliveryTask> findCompleted(Long idUser, boolean completed, int page, int size) {
+	public PageOf<DeliveryTask> findCompleted(Long idUser, boolean completed, int page, int size) {
 		// TODO Auto-generated method stub
-		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorIdAndCompleted(idUser, completed, new PageRequest(page, size));
+		PageRequest pageConfig = new PageRequest(page, size, new Sort(new Sort.Order(Direction.DESC, "createdDate")));
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorIdAndCompleted(idUser, completed, pageConfig);
 		
-		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_COMPLETED_NOT_FOUND);
-		
-		return pageDTask;
+		String msg = completed == true ? MSG_PAGE_COMPLETED_TRUE_NOT_FOUND : MSG_PAGE_COMPLETED_FALSE_NOT_FOUND;
+		if(!pageDTask.hasContent()) throw new DeliveryTaskNotFoundException(msg);
+		PageOf<DeliveryTask> pageOfDeliveryTasks = createPageOf(pageDTask);
+		return pageOfDeliveryTasks;
 	}
 
 	@Override
-	public Page<DeliveryTask> findReserved(Long idUser, boolean reserved, int page, int size) {
+	public PageOf<DeliveryTask> findReserved(Long idUser, boolean reserved, int page, int size) {
 		// TODO Auto-generated method stub
-		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorIdAndReserved(idUser, reserved, new PageRequest(page, size));
+		PageRequest pageConfig = new PageRequest(page, size, new Sort(new Sort.Order(Direction.DESC, "createdDate")));
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByCreatorIdAndReserved(idUser, reserved, pageConfig);
 		
-		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_RESERVED_NOT_FOUND);
-		return pageDTask;
+		String msg = reserved == true ? MSG_PAGE_RESERVED_TRUE_NOT_FOUND : MSG_PAGE_RESERVED_FALSE_NOT_FOUND;
+		if(!pageDTask.hasContent()) throw new DeliveryTaskNotFoundException(msg);
+		PageOf<DeliveryTask> pageOfDeliveryTasks = createPageOf(pageDTask);
+		return pageOfDeliveryTasks;
 	}
 
 	@Override
-	public Page<DeliveryTask> findByDeliveryMan(String deliveryMan, int page, int size) {
+	public PageOf<DeliveryTask> findByDeliveryMan(String deliveryMan, int page, int size) {
 		// TODO Auto-generated method stub
-		Page<DeliveryTask> pageDTask = dTaskRepo.findByDeliveryMan(deliveryMan, new PageRequest(page, size));
+		PageRequest pageConfig = new PageRequest(page, size, new Sort(new Sort.Order(Direction.DESC, "createdDate")));
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByDeliveryMan(deliveryMan, pageConfig);
 		
-		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND);
-		return pageDTask;
+		if(!pageDTask.hasContent()) throw new DeliveryTaskNotFoundException(MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND);
+		PageOf<DeliveryTask> pageOfDeliveryTasks = createPageOf(pageDTask);
+		return pageOfDeliveryTasks;
 	}
-
+	
 	@Override
-	public Page<DeliveryTask> findDeliveryManAndCompleted(String deliveryMan, boolean completed, int page, int size) {
+	public PageOf<DeliveryTask> findDeliveryManAndCompleted(String deliveryMan, boolean completed, int page, int size) {
 		// TODO Auto-generated method stub
-		Page<DeliveryTask> pageDTask = dTaskRepo.findByDeliveryManAndCompleted(deliveryMan, completed, new PageRequest(page, size));
+		PageRequest pageConfig = new PageRequest(page, size, new Sort(new Sort.Order(Direction.DESC, "createdDate")));
+		Page<DeliveryTask> pageDTask = dTaskRepo.findByDeliveryManAndCompleted(deliveryMan, completed, pageConfig);
 		
-		if(pageDTask == null) throw new DeliveryTaskNotFoundException(MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND);
-		return pageDTask;
+		if(!pageDTask.hasContent()) throw new DeliveryTaskNotFoundException(MSG_PAGE_DELIVERY_MAN_TASKS_NOT_FOUND);
+		// need refactor after by a function that return PageOf<>
+		PageOf<DeliveryTask> pageOfDeliveryTasks = createPageOf(pageDTask);
+		return pageOfDeliveryTasks;
 	}
 	
 	@Override
@@ -182,8 +201,8 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 	}
 
 	@Override
-	public void setReservedFalse(Long idTask, Long idUser) {
-		DeliveryTask dTask = read(idTask, idUser);
+	public void setReservedFalse(Long idTask, Long idCreator) {
+		DeliveryTask dTask = read(idTask, idCreator);
 		if(dTask.getReserved()){
 			dTask.setDeliveryMan(null);
 			dTask.setReserved(false);
@@ -212,5 +231,13 @@ public class DeliveryTaskServiceImpl implements DeliveryTaskService {
 			progress -= 1/pointSize*100;
 		}
 		return progress;
+	}
+	
+	private PageOf<DeliveryTask> createPageOf(Page<DeliveryTask> pageDTask){
+		return new PageOf<DeliveryTask>(pageDTask.getContent(),
+				pageDTask.getNumber(), 
+				pageDTask.getNumberOfElements(), 
+				pageDTask.getTotalElements(), 
+				pageDTask.getTotalPages());
 	}
 }

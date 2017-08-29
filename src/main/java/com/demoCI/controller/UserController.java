@@ -3,6 +3,9 @@
  */
 package com.demoCI.controller;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import com.demoCI.controller.dto.UserRegisterDTO;
 import com.demoCI.model.User;
 import com.demoCI.service.PageOf;
 import com.demoCI.service.UserService;
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Med
@@ -60,7 +64,9 @@ public class UserController {
 	@RequestMapping(path="/users", params = {"page"}, method=RequestMethod.GET)
 	public ResponseEntity<PageOf<UserDTO>> findUserPage(@RequestParam("page") int page){
 		PageOf<User> userPage = userService.findByPage(page, 10);
-		PageOf<UserDTO> userDtoPage = modelMapper.map(userPage, PageOf.class);
+		Type typeList = new TypeToken<List<UserDTO>>() {}.getType();
+		List<UserDTO> listUsers = modelMapper.map(userPage.getContents(), typeList);
+		PageOf<UserDTO> userDtoPage = new PageOf<>(listUsers, page, userPage.getSize(), userPage.getTotalValues(), userPage.getTotalPages());
 		return ResponseEntity.ok(userDtoPage);
 	}
 	
