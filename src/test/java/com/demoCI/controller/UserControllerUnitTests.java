@@ -12,10 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,8 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.demoCI.DemoCiApplication;
-import com.demoCI.controller.dto.UserRegisterDTO;
 import com.demoCI.model.User;
 import com.demoCI.service.PageOf;
 import com.demoCI.service.UserService;
@@ -36,7 +34,6 @@ import com.demoCI.service.UserService;
  * 29 août 2017
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes=DemoCiApplication.class)
 @WebMvcTest(value = UserController.class, secure = false)
 public class UserControllerUnitTests {
 
@@ -44,16 +41,13 @@ public class UserControllerUnitTests {
 	private MockMvc mockMvc;
 	@MockBean
 	private UserService userService;
-	UserRegisterDTO userDto;
+	@MockBean
+	private ModelMapper modelMapper;
 	User user;
 	String userJSON = "{\"username\":\"usernameController\", \"email\":\"emailController\", \"password\":\"pass\"}";
 	
 	@Before
 	public void initialize(){
-		userDto = new UserRegisterDTO();
-		userDto.setUsername("usernameController");
-		userDto.setEmail("emailController");
-		userDto.setPassword("pass");
 		user = new User("usernameController", "emailController", "pass");
 		user.setId(33L);
 	}

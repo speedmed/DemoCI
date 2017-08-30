@@ -66,6 +66,7 @@ public class DemoCiApplicationTests2 {
 		DeliveryPointDTO dPointDto2 = new DeliveryPointDTO("point2", "No", 15d, 41d, null);
 		dTaskDto = new DeliveryTaskDTO("task1", new Date(), new Date(System.currentTimeMillis()+600000), false, 0.0f, false, null);
 		dTaskDto.setDeliveryPoints(Arrays.asList(dPointDto1, dPointDto2));
+
 		
 	}
 	

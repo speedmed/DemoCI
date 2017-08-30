@@ -12,6 +12,7 @@ public class DemoCiApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(DemoCiApplication.class, args);
+		
 	}
 	@Bean
 	public ModelMapper modelMapper() {
